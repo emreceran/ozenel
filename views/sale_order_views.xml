@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+    <!-- Satış Teklifi Form Görünümüne Para Birimi Alanları -->
+    <record id="view_order_form_currency" model="ir.ui.view">
+      <field name="name">sale.order.form.currency.selection</field>
+      <field name="model">sale.order</field>
+      <field name="inherit_id" ref="sale.view_order_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//group" position="inside">
+          <group string="Döviz Kurları">
+            <field name="usd_rate"/>
+            <field name="eur_rate"/>
+          </group>
+
+        </xpath>
+      </field>
+    </record>
+
+    <!-- Satır Liste Görünümüne Tedarikçi Fiyat Alanları -->
+    <record id="view_order_form_inherit_ozenel" model="ir.ui.view">
+      <field name="name">sale.order.form.inherit.ozenel</field>
+      <field name="model">sale.order</field>
+      <field name="inherit_id" ref="sale.view_order_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='order_line']/list/field[@name='price_unit']" position="before">
+          <field name="x_brand_name" string="Marka" optional="show"/>
+          <field name="tedarikci_currency_id"/>
+          <field name="tedarikci_fiyat" widget="monetary" options="{'currency_field': 'tedarikci_currency_id'}"/>
+          <field name="tedarikci_indirim_yuzdesi"/>
+          <field name="tedarikci_maliyet_para_birimli" widget="monetary" options="{'currency_field': 'tedarikci_currency_id'}"/>
+          <field name="purchase_price_currency_id" column_invisible="1"/>
+          <field name="purchase_price" widget="monetary" options="{'currency_field': 'purchase_price_currency_id'}"/>
+          <field name="margin_yeni" string="Kar (%)" optional="show"/>
+
+        </xpath>
+
+
+      </field>
+    </record>
+
+  </data>
+</odoo>
+
