@@ -4,14 +4,14 @@ class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     usd_rate = fields.Float(
-        string='USD Kuru (1 USD = ? TL)',
+        string='USD Kuru ',
         digits=(16, 5),
         default=lambda self: self._get_inverse_rate('USD'),
         help='1 USD kaç TL eder. Sistemden otomatik gelir, manuel değiştirilebilir.'
     )
 
     eur_rate = fields.Float(
-        string='EUR Kuru (1 EUR = ? TL)',
+        string='EUR Kuru ',
         digits=(16, 5),
         default=lambda self: self._get_inverse_rate('EUR'),
         help='1 EUR kaç TL eder. Sistemden otomatik gelir, manuel değiştirilebilir.'

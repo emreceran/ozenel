@@ -6,12 +6,12 @@ class SaleOrderLine(models.Model):
 
     tedarikci_currency_id = fields.Many2one(
         'res.currency',
-        string='Tedarikçi Para Birimi',
+        string='Ted. PB ',
         help='Tedarikçi fiyatı için geçerli para birimi.'
     )
 
     tedarikci_fiyat = fields.Float(
-        string='Tedarikçi Fiyatı',
+        string='Ted. Fiyatı',
         digits='Product Price',
         help='Tedarikçi tarafından verilen fiyat.'
     )
