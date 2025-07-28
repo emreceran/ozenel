@@ -13,6 +13,12 @@
             <field name="usd_rate"/>
             <field name="eur_rate"/>
           </group>
+          <group>
+            <button name="action_recalculate_price_units"
+                    string="Satır Fiyatlarını Güncelle"
+                    type="object"
+                    class="btn-secondary"/>
+          </group>
 
         </xpath>
       </field>
@@ -34,10 +40,15 @@
           <field name="purchase_price" widget="monetary" options="{'currency_field': 'purchase_price_currency_id'}"/>
           <field name="margin_yeni" string="Kar (%)" optional="show"/>
 
+
         </xpath>
 
         <xpath expr="//field[@name='order_line']/form//field[@name='tax_id']" position="attributes">
           <attribute name="invisible">1</attribute>
+        </xpath>
+
+        <xpath expr="//field[@name='order_line']/form//field[@name='product_uom']" position="attributes">
+          <attribute name="string">Birim</attribute>
         </xpath>
 
 
