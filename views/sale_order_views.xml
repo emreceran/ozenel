@@ -9,18 +9,25 @@
       <field name="inherit_id" ref="sale.view_order_form"/>
       <field name="arch" type="xml">
         <xpath expr="//group" position="inside">
-          <group string="Döviz Kurları">
-            <field name="usd_rate"/>
-            <field name="eur_rate"/>
-          </group>
-          <group>
+          <group string="Döviz Kurları" col="4">
+            <field name="usd_rate" readonly="state not in ('draft','sent')"/>
+            <field name="eur_rate" readonly="state not in ('draft','sent')"/>
+            <newline/>
             <button name="action_recalculate_price_units"
                     string="Satır Fiyatlarını Güncelle"
                     type="object"
-                    class="btn-secondary"/>
+                    class="btn btn-primary"
+                    invisible="state not in ('draft','sent')"/>
           </group>
 
+
+
         </xpath>
+
+        <xpath expr="//button[@name='action_update_prices']" position="attributes">
+          <attribute name="invisible">True</attribute>
+        </xpath>
+
       </field>
     </record>
 
