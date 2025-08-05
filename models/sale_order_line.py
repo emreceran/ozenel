@@ -6,8 +6,10 @@ class SaleOrderLine(models.Model):
 
     tedarikci_currency_id = fields.Many2one(
         'res.currency',
-        string='Ted. PB ',
-        help='Tedarikçi fiyatı için geçerli para birimi.'
+        string='Para Birimi',
+        help='Tedarikçi fiyatı için geçerli para birimi.',
+        # Varsayılan değeri belirleyen satır
+        default=lambda self: self.env.ref('base.TRY').id
     )
 
     tedarikci_fiyat = fields.Float(
