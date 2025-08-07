@@ -20,8 +20,6 @@
                     invisible="state not in ('draft','sent')"/>
           </group>
 
-
-
         </xpath>
 
         <xpath expr="//button[@name='action_update_prices']" position="attributes">
@@ -61,6 +59,8 @@
 
       </field>
     </record>
+
+
 
   </data>
 </odoo>
