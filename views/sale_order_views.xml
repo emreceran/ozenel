@@ -2,6 +2,17 @@
 <odoo>
   <data>
 
+    <record id="product_template_form_view_inherit_ozenel" model="ir.ui.view">
+            <field name="name">product.template.form.inherit.ozenel</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='standard_price']" position="after">
+                    <field name="maliyet_carpani"/>
+                </xpath>
+            </field>
+        </record>
+
     <!-- Satış Teklifi Form Görünümüne Para Birimi Alanları -->
     <record id="view_order_form_currency" model="ir.ui.view">
       <field name="name">sale.order.form.currency.selection</field>
@@ -42,6 +53,8 @@
           <field name="tedarikci_indirim_yuzdesi"/>
           <field name="tedarikci_maliyet_para_birimli" widget="monetary" options="{'currency_field': 'tedarikci_currency_id'}"/>
           <field name="purchase_price_currency_id" column_invisible="1"/>
+          <field name="maliyet_carpani" optional="show"/>
+
           <field name="purchase_price" widget="monetary" options="{'currency_field': 'purchase_price_currency_id'}"/>
           <field name="margin_yeni" string="Kar (%)" optional="show"/>
 

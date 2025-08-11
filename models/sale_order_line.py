@@ -1,5 +1,7 @@
+# ozenel_modul/models/sale_order_line.py
+
 from odoo import fields, models, api
-from odoo.exceptions import UserError
+
 
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
@@ -8,14 +10,13 @@ class SaleOrderLine(models.Model):
         'res.currency',
         string='Para Birimi',
         help='Tedarikçi fiyatı için geçerli para birimi.',
-        # Varsayılan değeri belirleyen satır
         default=lambda self: self.env.ref('base.TRY').id
     )
 
     tedarikci_fiyat = fields.Float(
         string='Ted. Fiyatı',
         digits='Product Price',
-        help='Tedarikçi tarafından verilen fiyat.'
+        help='Tedarikçi tarafından verilen fiyat (örn: kg başına fiyat).'
     )
 
     tedarikci_indirim_yuzdesi = fields.Float(
@@ -24,11 +25,17 @@ class SaleOrderLine(models.Model):
         help='Tedarikçi fiyatına uygulanacak iskonto yüzdesi.'
     )
 
+    maliyet_carpani = fields.Float(
+        string='Maliyet Çarpanı (Kg)',
+        digits='Product Unit of Measure',
+        help='Maliyet hesaplamasında kullanılacak çarpan (örn: demir direk için kilo). Standart ürünler için bu değer 1 olmalıdır.'
+    )
+
     tedarikci_maliyet_para_birimli = fields.Float(
-        string='İndirimli Maliyet',
+        string='İndirimli Birim Maliyet',
         compute='_compute_maliyet_para_birimli',
         store=True,
-        help='İskonto sonrası maliyet, seçilen para biriminde.'
+        help='İskonto sonrası birim maliyet (örn: kg başına maliyet), seçilen para biriminde.'
     )
 
     purchase_price_currency_id = fields.Many2one(
@@ -53,14 +60,32 @@ class SaleOrderLine(models.Model):
             else:
                 line.tedarikci_maliyet_para_birimli = 0.0
 
-    @api.onchange('tedarikci_maliyet_para_birimli', 'tedarikci_currency_id', 'order_id.usd_rate', 'order_id.eur_rate')
+    @api.onchange('product_id')
+    def _onchange_product_id_set_carpani(self):
+        if self.product_id:
+            self.maliyet_carpani = self.product_id.product_tmpl_id.maliyet_carpani
+
+    @api.onchange('tedarikci_maliyet_para_birimli', 'tedarikci_currency_id', 'order_id.usd_rate', 'order_id.eur_rate',
+                  'maliyet_carpani')
     def _onchange_set_purchase_price(self):
+        if not self.product_id:
+            return
+
         rate = 1.0
         if self.tedarikci_currency_id.name == 'USD':
             rate = self.order_id.usd_rate or 1.0
         elif self.tedarikci_currency_id.name == 'EUR':
             rate = self.order_id.eur_rate or 1.0
         else:
-            rate = 1.0  # TL varsayılan
+            rate = 1.0
 
-        self.purchase_price = self.tedarikci_maliyet_para_birimli * rate
+        self.purchase_price = self.tedarikci_maliyet_para_birimli * self.maliyet_carpani * rate
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get('product_id') and not vals.get('maliyet_carpani'):
+                product = self.env['product.product'].browse(vals['product_id'])
+                if product.product_tmpl_id.maliyet_carpani:
+                    vals['maliyet_carpani'] = product.product_tmpl_id.maliyet_carpani
+        return super(SaleOrderLine, self).create(vals_list)
