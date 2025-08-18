@@ -3,6 +3,9 @@ from odoo import models, fields, api
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
+    active = fields.Boolean(copy=False, default=True)
+
+
     usd_rate = fields.Float(
         string='USD Kuru',
         digits=(16, 5),

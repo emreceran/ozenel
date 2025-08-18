@@ -89,4 +89,3 @@ class SaleOrderLine(models.Model):
                 if product.product_tmpl_id.maliyet_carpani:
                     vals['maliyet_carpani'] = product.product_tmpl_id.maliyet_carpani
         return super(SaleOrderLine, self).create(vals_list)
-
