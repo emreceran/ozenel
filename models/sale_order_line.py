@@ -10,24 +10,28 @@ class SaleOrderLine(models.Model):
         'res.currency',
         string='Para Birimi',
         help='Tedarikçi fiyatı için geçerli para birimi.',
+        copy=True,
         default=lambda self: self.env.ref('base.TRY').id
     )
 
     tedarikci_fiyat = fields.Float(
         string='Ted. Fiyatı',
         digits='Product Price',
+        copy=True,
         help='Tedarikçi tarafından verilen fiyat (örn: kg başına fiyat).'
     )
 
     tedarikci_indirim_yuzdesi = fields.Float(
         string='İskonto (%)',
         digits='Discount',
+        copy=True,
         help='Tedarikçi fiyatına uygulanacak iskonto yüzdesi.'
     )
 
     maliyet_carpani = fields.Float(
         string='Maliyet Çarpanı (Kg)',
         digits='Product Unit of Measure',
+        copy=True,
         help='Maliyet hesaplamasında kullanılacak çarpan (örn: demir direk için kilo). Standart ürünler için bu değer 1 olmalıdır.'
     )
 
@@ -35,6 +39,7 @@ class SaleOrderLine(models.Model):
         string='İndirimli Birim Maliyet',
         compute='_compute_maliyet_para_birimli',
         store=True,
+
         help='İskonto sonrası birim maliyet (örn: kg başına maliyet), seçilen para biriminde.'
     )
 
@@ -45,6 +50,8 @@ class SaleOrderLine(models.Model):
         store=True,
         help='Satın alma fiyatının para birimi (fiyat listesinden alınır).'
     )
+
+    purchase_price = fields.Float(copy=True)
 
     @api.depends('order_id.pricelist_id.currency_id')
     def _compute_purchase_price_currency(self):

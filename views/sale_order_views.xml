@@ -77,6 +77,23 @@
       </field>
     </record>
 
+      <!-- Satır Liste Görünümüne Tedarikçi Fiyat Alanları -->
+    <record id="view_purchase_order_form_inherit_ozenel" model="ir.ui.view">
+      <field name="name">purchase.order.form.inherit.ozenel</field>
+      <field name="model">purchase.order</field>
+      <field name="inherit_id" ref="purchase.purchase_order_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='order_line']/list/field[@name='name']" position="after">
+          <field name="x_brand_name" string="Marka" optional="show"/>
+
+
+        </xpath>
+
+
+
+      </field>
+    </record>
+
      <record id="sale_order_search_view_inherit_add_archive_filter" model="ir.ui.view">
             <field name="name">sale.order.search.add.archive.filter</field>
             <field name="model">sale.order</field>
