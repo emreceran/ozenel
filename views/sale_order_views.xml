@@ -13,16 +13,16 @@
       </field>
     </record>
 
-    <!-- Satış Teklifi Form Görünümüne Para Birimi Alanları -->
     <record id="view_order_form_currency" model="ir.ui.view">
       <field name="name">sale.order.form.currency.selection</field>
       <field name="model">sale.order</field>
       <field name="inherit_id" ref="sale.view_order_form"/>
       <field name="arch" type="xml">
         <xpath expr="//group" position="inside">
-          <group string="Döviz Kurları" col="4">
+          <group string="Döviz Kurları ve Dönüşüm" col="4">
             <field name="usd_rate" readonly="state not in ('draft','sent')"/>
             <field name="eur_rate" readonly="state not in ('draft','sent')"/>
+            <field name="target_currency_id" readonly="state not in ('draft','sent')"/>
             <newline/>
             <button name="action_recalculate_price_units"
                     string="Satır Fiyatlarını Güncelle"
@@ -30,15 +30,20 @@
                     class="btn btn-primary"
                     invisible="state not in ('draft','sent')"/>
           </group>
-
         </xpath>
 
         <xpath expr="//button[@name='action_update_prices']" position="attributes">
           <attribute name="invisible">True</attribute>
         </xpath>
 
+        <!-- Label ve div yapısını tamamen kaldır -->
+        <xpath expr="//label[@for='pricelist_id']" position="replace"/>
+        <xpath expr="//div[contains(@class, 'o_row')]" position="replace">
+          <!-- Boş bırakılarak div tamamen kaldırılır -->
+        </xpath>
       </field>
     </record>
+
 
     <!-- Satır Liste Görünümüne Tedarikçi Fiyat Alanları -->
     <record id="view_order_form_inherit_ozenel" model="ir.ui.view">
@@ -77,7 +82,7 @@
       </field>
     </record>
 
-      <!-- Satır Liste Görünümüne Tedarikçi Fiyat Alanları -->
+    <!-- Satır Liste Görünümüne Tedarikçi Fiyat Alanları -->
     <record id="view_purchase_order_form_inherit_ozenel" model="ir.ui.view">
       <field name="name">purchase.order.form.inherit.ozenel</field>
       <field name="model">purchase.order</field>
@@ -94,18 +99,18 @@
       </field>
     </record>
 
-     <record id="sale_order_search_view_inherit_add_archive_filter" model="ir.ui.view">
-            <field name="name">sale.order.search.add.archive.filter</field>
-            <field name="model">sale.order</field>
-            <field name="inherit_id" ref="sale.sale_order_view_search_inherit_quotation"/>
-            <field name="arch" type="xml">
-                <xpath expr="//search/field[@name='partner_id']" position="after">
-                    <separator/>
-                    <filter string="Arşivlenenler" name="archived" domain="[('active', '=', False)]"/>
-                    <separator/>
-                </xpath>
-            </field>
-        </record>
+    <record id="sale_order_search_view_inherit_add_archive_filter" model="ir.ui.view">
+      <field name="name">sale.order.search.add.archive.filter</field>
+      <field name="model">sale.order</field>
+      <field name="inherit_id" ref="sale.sale_order_view_search_inherit_quotation"/>
+      <field name="arch" type="xml">
+        <xpath expr="//search/field[@name='partner_id']" position="after">
+          <separator/>
+          <filter string="Arşivlenenler" name="archived" domain="[('active', '=', False)]"/>
+          <separator/>
+        </xpath>
+      </field>
+    </record>
 
 
 

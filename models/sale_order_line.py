@@ -51,7 +51,7 @@ class SaleOrderLine(models.Model):
         help='Satın alma fiyatının para birimi (fiyat listesinden alınır).'
     )
 
-    purchase_price = fields.Float(copy=True)
+    # purchase_price = fields.Float(copy=True)
 
     @api.depends('order_id.pricelist_id.currency_id')
     def _compute_purchase_price_currency(self):
