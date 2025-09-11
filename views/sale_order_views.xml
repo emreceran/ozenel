@@ -53,11 +53,11 @@
       <field name="arch" type="xml">
         <xpath expr="//field[@name='order_line']/list/field[@name='price_unit']" position="before">
           <field name="x_brand_name" string="Marka" optional="show"/>
-          <field name="tedarikci_currency_id"/>
-          <field name="tedarikci_fiyat" widget="monetary" options="{'currency_field': 'tedarikci_currency_id'}"/>
-          <field name="tedarikci_indirim_yuzdesi"/>
-          <field name="maliyet_carpani" optional="show"/>
-          <field name="tedarikci_maliyet_para_birimli" widget="monetary" options="{'currency_field': 'tedarikci_currency_id'}"/>
+          <field name="tedarikci_currency_id" class="text-success"/>
+          <field name="tedarikci_fiyat" widget="monetary" class="text-success" options="{'currency_field': 'tedarikci_currency_id'}"/>
+          <field name="tedarikci_indirim_yuzdesi" class="text-success"/>
+          <field name="maliyet_carpani" optional="show" class="text-success"/>
+          <field name="tedarikci_maliyet_para_birimli" widget="monetary" class="text-success" options="{'currency_field': 'tedarikci_currency_id'}"/>
           <field name="son_maliyet" widget="monetary" options="{'currency_field': 'currency_id'}"/>
           <field name="margin_yeni" string="Kar (%)" optional="show"/>
 
