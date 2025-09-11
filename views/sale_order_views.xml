@@ -59,7 +59,6 @@
           <field name="maliyet_carpani" optional="show" class="text-success"/>
           <field name="tedarikci_maliyet_para_birimli" widget="monetary" class="text-success" options="{'currency_field': 'tedarikci_currency_id'}"/>
           <field name="son_maliyet" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-          <field name="margin_yeni" string="Kar (%)" optional="show"/>
 
 
         </xpath>

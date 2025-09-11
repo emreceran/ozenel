@@ -86,3 +86,5 @@ class SaleOrder(models.Model):
                 line.price_unit = line.son_maliyet * (1 + line.margin_yeni / 100.0)
 
                 line.currency_id = target_currency.id
+
+            order.currency_id = target_currency.id

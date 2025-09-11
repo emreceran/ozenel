@@ -10,7 +10,7 @@
     'website': 'http://www.yourwebsite.com',
     'category': 'Sales',
     'version': '1.0',
-    'depends': ['sale_management', 'product', 'sale_margin', 'margin_editable'], # sale_margin hala gerekli
+    'depends': ['sale_management', 'product', 'sale_margin'], # sale_margin hala gerekli
     'data': [
         'views/sale_order_views.xml',
         'views/product_product_views.xml',
