@@ -32,46 +32,57 @@ class SaleOrder(models.Model):
         help='Dönüştürmeden sonraki para birimi.'
     )
 
-    @api.onchange('target_currency_id')
-    def _onchange_target_currency(self):
-        for order in self:
-            if order.target_currency_id and order.currency_id:
-                order.previous_currency_id = order.currency_id
+    # @api.onchange('target_currency_id')
+    # def _onchange_target_currency(self):
+    #     for order in self:
+    #         if order.target_currency_id and order.currency_id:
+    #             order.previous_currency_id = order.currency_id
 
     def _get_inverse_rate(self, currency_name):
         currency = self.env['res.currency'].search([('name', '=', currency_name)], limit=1)
         return round(1.0 / currency.rate, 5) if currency and currency.rate else 0.0
 
+    # def action_recalculate_price_units(self):
+    #     for order in self:
+    #         new_currency = order.target_currency_id
+    #         if not new_currency:
+    #             continue
+    #
+    #         for line in order.order_line:
+    #             line.currency_id = new_currency  # Satırın hedef para birimi
+    #
+    #         order.previous_currency_id = new_currency
+
     def action_recalculate_price_units(self):
         for order in self:
-            old_currency = order.previous_currency_id or self.env['res.currency'].search([('name', '=', 'TRY')], limit=1)
-            new_currency = order.target_currency_id
-
-            if not new_currency:
-                continue
-
-            usd = order.usd_rate or 1.0
-            eur = order.eur_rate or 1.0
+            usd = order.usd_rate
+            eur = order.eur_rate
+            target_currency = order.target_currency_id
+            target_name = target_currency.name
 
             for line in order.order_line:
-                price = line.price_unit
 
-                if old_currency.name == 'USD' and new_currency.name == 'TRY':
-                    converted = price * usd
-                elif old_currency.name == 'TRY' and new_currency.name == 'USD':
-                    converted = price / usd if usd else price
-                elif old_currency.name == 'EUR' and new_currency.name == 'TRY':
-                    converted = price * eur
-                elif old_currency.name == 'TRY' and new_currency.name == 'EUR':
-                    converted = price / eur if eur else price
-                elif old_currency.name == 'USD' and new_currency.name == 'EUR':
-                    converted = (price * usd) / eur
-                elif old_currency.name == 'EUR' and new_currency.name == 'USD':
-                    converted = (price * eur) / usd
+                base_cost = line.tedarikci_maliyet_para_birimli or 0.0
+                source_name = line.tedarikci_currency_id.name
+
+                if source_name == target_name or not source_name or not target_name:
+                    converted = base_cost
+                elif source_name == 'USD' and target_name == 'TRY':
+                    converted = base_cost * usd
+                elif source_name == 'TRY' and target_name == 'USD':
+                    converted = base_cost / usd if usd else base_cost
+                elif source_name == 'EUR' and target_name == 'TRY':
+                    converted = base_cost * eur
+                elif source_name == 'TRY' and target_name == 'EUR':
+                    converted = base_cost / eur if eur else base_cost
+                elif source_name == 'USD' and target_name == 'EUR':
+                    converted = (base_cost * usd) / eur if eur else base_cost
+                elif source_name == 'EUR' and target_name == 'USD':
+                    converted = (base_cost * eur) / usd if usd else base_cost
                 else:
-                    converted = price
+                    converted = base_cost
 
-                line.price_unit = round(converted, 2)
-                line.currency_id = new_currency
+                line.son_maliyet = round(converted, 2)
+                line.price_unit = line.son_maliyet * (1 + line.margin_yeni / 100.0)
 
-            order.previous_currency_id = new_currency
+                line.currency_id = target_currency.id

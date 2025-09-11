@@ -13,6 +13,7 @@
     'depends': ['sale_management', 'product', 'sale_margin', 'margin_editable'], # sale_margin hala gerekli
     'data': [
         'views/sale_order_views.xml',
+        'views/product_product_views.xml',
     ],
     'installable': True,
     'application': False,

@@ -1,0 +1,18 @@
+<!-- ozenel_modul/views/product_product_views.xml -->
+<odoo>
+    <record id="view_product_form_inherit_tedarikci" model="ir.ui.view">
+        <field name="name">product.product.form.inherit.tedarikci</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_normal_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='default_code']" position="after">
+
+
+                <field name="tedarikci_maliyet" readonly="1" class="o_half"/>
+                <field name="tedarikci_para_birimi" readonly="1" class="o_half"/>
+
+
+            </xpath>
+        </field>
+    </record>
+</odoo>

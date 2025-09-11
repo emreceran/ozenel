@@ -21,6 +21,14 @@ class SaleOrderLine(models.Model):
         help='Tedarikçi tarafından verilen fiyat (örn: kg başına fiyat).'
     )
 
+    @api.onchange('product_id')
+    def _onchange_product_id_set_tedarikci_bilgileri(self):
+        for line in self:
+            product = line.product_id
+            if product:
+                line.tedarikci_fiyat = product.tedarikci_maliyet
+                line.tedarikci_currency_id = product.tedarikci_para_birimi
+
     tedarikci_indirim_yuzdesi = fields.Float(
         string='İskonto (%)',
         digits='Discount',
@@ -38,55 +46,33 @@ class SaleOrderLine(models.Model):
     tedarikci_maliyet_para_birimli = fields.Float(
         string='İndirimli Birim Maliyet',
         compute='_compute_maliyet_para_birimli',
-        store=True,
-
+        store=False,
         help='İskonto sonrası birim maliyet (örn: kg başına maliyet), seçilen para biriminde.'
     )
 
-    purchase_price_currency_id = fields.Many2one(
-        'res.currency',
-        string='Teklifs PB',
-        compute='_compute_purchase_price_currency',
-        store=True,
-        help='Satın alma fiyatının para birimi (fiyat listesinden alınır).'
-    )
-
-    # purchase_price = fields.Float(copy=True)
-
-    @api.depends('order_id.pricelist_id.currency_id')
-    def _compute_purchase_price_currency(self):
-        for line in self:
-            line.purchase_price_currency_id = line.order_id.pricelist_id.currency_id
-
-    @api.depends('tedarikci_fiyat', 'tedarikci_indirim_yuzdesi')
+    @api.depends('tedarikci_fiyat', 'tedarikci_indirim_yuzdesi', 'maliyet_carpani')
     def _compute_maliyet_para_birimli(self):
         for line in self:
             if line.tedarikci_fiyat > 0.0:
                 discounted = line.tedarikci_fiyat * (1 - line.tedarikci_indirim_yuzdesi / 100.0)
-                line.tedarikci_maliyet_para_birimli = discounted
+                line.tedarikci_maliyet_para_birimli = discounted * line.maliyet_carpani
             else:
                 line.tedarikci_maliyet_para_birimli = 0.0
+
+    son_maliyet = fields.Float(
+        string='Son Maliyet',
+        digits='Product Price',
+        copy=True,
+        help='İndirimli ve dönüştürülmüş nihai maliyet. Şimdilik manuel olarak girilir.'
+    )
+
+
+
 
     @api.onchange('product_id')
     def _onchange_product_id_set_carpani(self):
         if self.product_id:
             self.maliyet_carpani = self.product_id.product_tmpl_id.maliyet_carpani
-
-    @api.onchange('tedarikci_maliyet_para_birimli', 'tedarikci_currency_id', 'order_id.usd_rate', 'order_id.eur_rate',
-                  'maliyet_carpani')
-    def _onchange_set_purchase_price(self):
-        if not self.product_id:
-            return
-
-        rate = 1.0
-        if self.tedarikci_currency_id.name == 'USD':
-            rate = self.order_id.usd_rate or 1.0
-        elif self.tedarikci_currency_id.name == 'EUR':
-            rate = self.order_id.eur_rate or 1.0
-        else:
-            rate = 1.0
-
-        self.purchase_price = self.tedarikci_maliyet_para_birimli * self.maliyet_carpani * rate
 
     @api.model_create_multi
     def create(self, vals_list):

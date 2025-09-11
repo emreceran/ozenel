@@ -1,24 +1,17 @@
-# ozenel_modul/models/product_template.py
+# ozenel_modul/models/product_product.py
 
-from odoo import fields, models, api
+from odoo import models, fields, api
 
-class ProductTemplate(models.Model):
-    _inherit = 'product.template'
 
-    # Ürün kartına maliyet çarpanı alanını ekliyoruz.
-    # Buraya girilen değer, ürün satış siparişine eklendiğinde varsayılan olarak gelecektir.
-    maliyet_carpani = fields.Float(
-        string='Maliyet Çarpanı (Kg)',
-        default=1.0,
-        help="Bu ürün için varsayılan maliyet çarpanı. Örn: Demir direk için kilosu. Satış siparişinde bu değer değiştirilebilir."
-    )
+class ProductProduct(models.Model):
+    _inherit = 'product.product'
 
     tedarikci_maliyet = fields.Float(
         string='Tedarikçi Maliyeti (En Pahalı)',
         digits='Product Price',
         compute='_compute_tedarikci_maliyet',
         store=True,
-        help='Tedarikçiler arasından en yüksek fiyatlı olanın maliyeti.'
+        help='Bu varyant için en pahalı tedarikçi fiyatı.'
     )
 
     tedarikci_para_birimi = fields.Many2one(
@@ -26,7 +19,7 @@ class ProductTemplate(models.Model):
         string='Tedarikçi Para Birimi',
         compute='_compute_tedarikci_maliyet',
         store=True,
-        help='En pahalı tedarikçi fiyatının para birimi.'
+        help='Bu varyant için en pahalı tedarikçi fiyatının para birimi.'
     )
 
     @api.depends('seller_ids.price', 'seller_ids.currency_id')
